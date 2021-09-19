@@ -68,16 +68,17 @@ func fillSQLTable(dbfTable *godbf.DbfTable, tableName string) {
 
 func main() {
 	dbf := flag.String("f", "", "dBase DBF file (required)")
-	sql := flag.String("o", "-", "Output SQL file ('-' or default to stdout)")
-	table := flag.String("t", "test", "Table name (default is 'test')")
+	sql := flag.String("o", "-", "Output SQL file ('-' for stdout)")
+	table := flag.String("t", "", "Table name (required)")
+	encoding := flag.String("e", "UTF8", "Encoding")
 	flag.Parse()
 
-	if *dbf == "" {
-		flag.PrintDefaults()
+	if *dbf == "" || *table == "" {
+		flag.CommandLine.Usage()
 		os.Exit(1)
 	}
 
-	dbfTable, err := godbf.NewFromFile(*dbf, "UTF8")
+	dbfTable, err := godbf.NewFromFile(*dbf, *encoding)
 	if err != nil {
 		exit_error(err.Error(), 1)
 	}
